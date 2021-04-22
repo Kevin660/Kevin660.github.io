@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+
+  <canvas id="myCanvas" width="300" height="150" style="border:1px solid #d3d3d3;">
+    Your browser does not support the HTML5 canvas tag.</canvas>
+
+  <script>
+    var c = document.getElementById("myCanvas");
+    var ctx = c.getContext("2d");
+    var data = [
+      {
+        value: 100,
+        color: "red",
+        label: "A: 100",
+      },
+      {
+        value: 200,
+        color: "blue",
+        label: "A: 100",
+      },
+      {
+        value: 300,
+        color: "green",
+        label: "A: 100",
+      },
+    ];
+
+    elemX = c.offsetLeft;
+    elemY = c.offsetTop;
+    pieX = 100;
+    pieY = 75;
+    pieR = 50;
+
+    draw_pie();
+    draw_donut(30);
+    set_tooltip();
+
+    function draw_pie() {
+      var sum = 0;
+      var deg_from = 0;
+      data.forEach((d) => sum += d.value);
+      data.forEach((d) => {
+        var deg_to = deg_from + 2 * Math.PI * d.value / sum;
+        ctx.beginPath();
+        ctx.arc(pieX, pieY, pieR, deg_from, deg_to);
+        ctx.lineTo(pieX, pieY);
+        ctx.strokeStyle = d.color;
+        ctx.stroke();
+        ctx.fillStyle = d.color;
+        ctx.fill();
+        deg_from = deg_to;
+      });
+    }
+
+    function draw_donut(r, color = "white") {
+      ctx.beginPath();
+      ctx.arc(pieX, pieY, r, 0, 2 * Math.PI);
+      ctx.fillStyle = color;
+      ctx.fill();
+    }
+
+    function set_tooltip() {
+      c.onmousemove = (e) => {
+        x = e.pageX - elemX;
+        y = e.pageY - elemY;
+        disToPie = Math.sqrt((x - pieX) ** 2 + (y - pieY) ** 2);
+        if (disToPie <= pieR) {
+          m = (y - pieY) / (x - pieX);
+          deg = Math.abs(Math.atan(m) / (Math.PI / 180)).toFixed(0);
+          if (m < 0) {
+            if (y < pieY) {
+              deg = 360 - deg;
+            } else {
+              deg = 180 - deg;
+            }
+          } else {
+            if (y < pieY) {
+              deg = 180 + deg;
+            } else {
+              deg = 0 + deg;
+            }
+          }
+        }
+      };
+    }
+
+
+  </script>
+
+</body>
+
+</html>
